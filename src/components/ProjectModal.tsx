@@ -34,6 +34,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   if (!isOpen || !project) return null;
 
   const isNoir = theme === 'noir';
+  const blueText = isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]';
+  const blueBg = isNoir ? 'bg-[#3D5CFF]' : 'bg-[#2946D3]';
 
   return (
     <div
@@ -51,7 +53,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         {/* Top Header Row */}
         <div className="flex items-center justify-between pb-4 border-b border-current/10">
           <div className="flex items-center gap-3">
-            <span className="font-editorial-mono text-[10px] tracking-[0.2em] uppercase text-[#2946D3]">
+            <span className={`font-editorial-mono text-[10px] tracking-[0.2em] uppercase ${blueText}`}>
               Project Specification
             </span>
             <span className="text-[10px] opacity-40">/</span>
@@ -68,7 +70,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                   onClose();
                   onEdit(project);
                 }}
-                className="font-editorial-mono text-[10px] tracking-wider uppercase text-[#2946D3] hover:underline"
+                className={`font-editorial-mono text-[10px] tracking-wider uppercase ${blueText} hover:underline`}
               >
                 [Edit Data]
               </button>
@@ -117,7 +119,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           <div>
             <span className="block opacity-50 uppercase tracking-widest text-[9px]">Status</span>
             <span className="font-medium mt-1 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#2946D3]" />
+              <span className={`w-1.5 h-1.5 rounded-full ${blueBg}`} />
               {project.status}
             </span>
           </div>
@@ -134,7 +136,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         {/* Project Overview */}
         <div className="space-y-4 font-editorial-sans text-xs md:text-sm leading-relaxed opacity-90">
           <div>
-            <h4 className="font-editorial-mono text-[10px] tracking-[0.2em] uppercase mb-1 text-[#2946D3]">
+            <h4 className={`font-editorial-mono text-[10px] tracking-[0.2em] uppercase mb-1 ${blueText}`}>
               Overview & Problem Architecture
             </h4>
             <p>{project.description}</p>
@@ -162,7 +164,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               <ul className="space-y-1.5 font-editorial-sans text-xs">
                 {project.deliverables.map((item, i) => (
                   <li key={i} className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-[#2946D3]" />
+                    <span className={`w-1 h-1 rounded-full ${blueBg}`} />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -181,7 +183,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               href={project.linkUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 font-editorial-sans text-xs font-medium text-[#2946D3] hover:underline"
+              className={`inline-flex items-center gap-1.5 font-editorial-sans text-xs font-medium ${blueText} hover:underline`}
             >
               {project.linkText || 'Open External Asset'}
               <ExternalLink className="w-3.5 h-3.5" />

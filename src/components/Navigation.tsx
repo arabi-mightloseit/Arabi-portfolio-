@@ -62,8 +62,10 @@ export const Navigation: React.FC<NavigationProps> = ({
             <a
               key={link.label}
               href={link.href}
-              className={`transition-colors duration-150 relative py-1 hover:text-[#2946D3] ${
-                isNoir ? 'text-[#F1EBDD]/70' : 'text-[#101116]/70'
+              className={`transition-colors duration-150 relative py-1 ${
+                isNoir
+                  ? 'text-[#F1EBDD]/70 hover:text-[#5577FF]'
+                  : 'text-[#101116]/70 hover:text-[#2946D3]'
               }`}
             >
               {link.label}
@@ -85,7 +87,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             title="Toggle between Pure Black (#101116) and Warm Ivory (#F1EBDD)"
           >
             <span className="opacity-50">CANVAS:</span>{' '}
-            <span className="font-semibold text-[#2946D3]">
+            <span className={`font-semibold ${isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]'}`}>
               {isNoir ? 'NOIR' : 'IVORY'}
             </span>
           </button>
@@ -116,7 +118,9 @@ export const Navigation: React.FC<NavigationProps> = ({
               key={link.label}
               href={link.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-1 opacity-80 hover:opacity-100 hover:text-[#2946D3]"
+              className={`block py-1 opacity-80 hover:opacity-100 ${
+                isNoir ? 'hover:text-[#5577FF]' : 'hover:text-[#2946D3]'
+              }`}
             >
               {link.label}
             </a>

@@ -5,6 +5,13 @@
     --font-serif: 'Instrument Serif', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+    --color-accent-blue: #2946D3;
+  }
+  .theme-noir {
+    --color-accent-blue: #4D6CFA;
+  }
+  .theme-ivory {
+    --color-accent-blue: #2946D3;
   }
 }
 

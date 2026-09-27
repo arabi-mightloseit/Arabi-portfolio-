@@ -86,7 +86,7 @@ export const SignatureSwitch: React.FC<SignatureSwitchProps> = ({
           } ${
             isNoir
               ? isArmed
-                ? 'bg-[#2946D3] text-[#F1EBDD] border border-[#3E5DEB]'
+                ? 'bg-[#3D5CFF] text-[#F1EBDD] border border-[#5577FF]'
                 : 'bg-[#222530] text-[#D8D2C4] border border-[#333748] group-hover:border-[#4B526B]'
               : isArmed
                 ? 'bg-[#2946D3] text-[#F1EBDD] border border-[#1E36AA]'
@@ -108,7 +108,9 @@ export const SignatureSwitch: React.FC<SignatureSwitchProps> = ({
           <span
             className={`font-editorial-mono text-[9px] tracking-[0.24em] font-medium uppercase transition-colors duration-150 ${
               isArmed
-                ? 'text-[#2946D3]'
+                ? isNoir
+                  ? 'text-[#5577FF]'
+                  : 'text-[#2946D3]'
                 : isNoir
                   ? 'text-[#F1EBDD]/65 group-hover:text-[#F1EBDD]'
                   : 'text-[#101116]/65 group-hover:text-[#101116]'
@@ -142,13 +144,13 @@ export const SignatureSwitch: React.FC<SignatureSwitchProps> = ({
           role="status"
           className={`absolute left-0 top-[38px] w-64 p-2.5 rounded-sm text-left shadow-lg border backdrop-blur-xs transition-opacity duration-200 ${
             isNoir
-              ? 'bg-[#14161D] border-[#2946D3]/40 text-[#F1EBDD]'
+              ? 'bg-[#14161D] border-[#3D5CFF]/40 text-[#F1EBDD]'
               : 'bg-[#F9F5EC] border-[#2946D3]/40 text-[#101116]'
           }`}
         >
           <div className="flex items-center gap-1.5 text-[10px] font-editorial-mono uppercase tracking-[0.16em]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
-            <span className="font-semibold text-[#2946D3]">
+            <span className={`font-semibold ${isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]'}`}>
               {isArmed ? 'OTHERWISE // ARMED' : 'OTHERWISE // STANDBY'}
             </span>
           </div>

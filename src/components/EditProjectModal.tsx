@@ -30,6 +30,10 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
   if (!isOpen) return null;
 
   const isNoir = theme === 'noir';
+  const blueText = isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]';
+  const blueBg = isNoir ? 'bg-[#3D5CFF]' : 'bg-[#2946D3]';
+  const blueHover = isNoir ? 'hover:bg-[#4E6EFF]' : 'hover:bg-[#2039B0]';
+  const blueFocusBorder = isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +73,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
       >
         <div className="flex items-center justify-between pb-3 border-b border-current/10">
           <div>
-            <span className="font-editorial-mono text-[10px] tracking-[0.2em] uppercase text-[#2946D3]">
+            <span className={`font-editorial-mono text-[10px] tracking-[0.2em] uppercase ${blueText}`}>
               Editable Placeholder
             </span>
             <h3 className="font-editorial-sans text-base font-semibold">
@@ -257,7 +261,7 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-sm bg-[#2946D3] text-[#F1EBDD] font-medium hover:bg-[#2039B0] transition-colors"
+              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-sm ${blueBg} text-[#F1EBDD] font-medium ${blueHover} transition-colors`}
             >
               <Check className="w-3.5 h-3.5" />
               Save Changes

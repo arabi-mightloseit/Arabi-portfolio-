@@ -200,10 +200,15 @@ export default function App() {
   };
 
   const isNoir = theme === 'noir';
+  // High-legibility royal blue on noir canvas, calibrated deep royal blue on ivory
+  const blueText = isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]';
+  const blueBg = isNoir ? 'bg-[#3D5CFF]' : 'bg-[#2946D3]';
+  const blueHover = isNoir ? 'hover:bg-[#4E6EFF]' : 'hover:bg-[#2039B0]';
+  const blueBorder = isNoir ? 'border-[#3D5CFF]' : 'border-[#2946D3]';
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-200 selection:bg-[#2946D3] selection:text-[#F1EBDD] ${
+      className={`min-h-screen transition-colors duration-200 theme-${theme} selection:bg-[#3D5CFF] selection:text-[#F1EBDD] ${
         isNoir
           ? 'bg-[#101116] text-[#F1EBDD]'
           : 'bg-[#F1EBDD] text-[#101116]'
@@ -230,7 +235,7 @@ export default function App() {
             </span>
             <span aria-hidden="true" className="opacity-40">·</span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3 text-[#2946D3]" />
+              <Clock className={`w-3 h-3 ${blueText}`} />
               {bdTime ? `${bdTime} BST (GMT+6)` : 'GMT+6'}
             </span>
             <span aria-hidden="true" className="opacity-40">·</span>
@@ -244,17 +249,17 @@ export default function App() {
                 <h1 className="font-editorial-serif text-5xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.05]">
                   ARABI
                 </h1>
-                <p className="mt-3 font-editorial-mono text-xs sm:text-sm tracking-[0.16em] uppercase text-[#2946D3] font-medium">
-                  Entrepreneur · Critical Thinker · Designer
+                <p className={`mt-3 font-editorial-mono text-xs sm:text-sm tracking-[0.16em] uppercase ${blueText} font-medium`}>
+                  Entrepreneur / creative director / whatever...
                 </p>
               </div>
 
               <div className="pt-2 text-sm sm:text-base font-editorial-sans leading-relaxed opacity-85 space-y-4">
                 <p>
-                  I build independent ventures and design minimal digital systems from Chittagong. My work is defined by severe restraint: stripping away cosmetic trends, questioning industry assumptions, and constructing resilient business models from first principles.
+                  I build independent ventures and design minimal systems from Chittagong. My work is defined by severe restraint: stripping away cosmetic trends, questioning industry assumptions, and constructing resilient models from first principles.
                 </p>
                 <p className="text-xs sm:text-sm opacity-70">
-                  Currently focused on lean commerce infrastructure, critical publication, and physical-to-digital systems in South Asia.
+                  Moving between business, design, clothing, photography and whatever else seems worth figuring out.
                 </p>
               </div>
 
@@ -262,7 +267,7 @@ export default function App() {
               <div className="pt-4 flex flex-wrap items-center gap-4 text-xs font-editorial-mono tracking-wider uppercase">
                 <a
                   href="#projects"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-sm bg-[#2946D3] text-[#F1EBDD] font-medium hover:bg-[#2039B0] transition-colors"
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-sm ${blueBg} text-[#F1EBDD] font-medium ${blueHover} transition-colors`}
                 >
                   <span>Selected Work</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -282,17 +287,16 @@ export default function App() {
             </div>
 
             {/* Right Photo Block:
-                "Crop the 1st photo that has a face keeping the thick white border"
-                Framed with thick pure white archival matting border */}
+                Displaying Arabi's original photo keeping the thick white border without artificial retouching */}
             <div className="md:col-span-5 flex flex-col items-center md:items-end">
               <div className="relative group">
                 {/* Thick pure white exhibition border */}
                 <div className="p-3 md:p-3.5 bg-white border border-black/15 shadow-sm max-w-[280px] sm:max-w-[320px]">
-                  <div className="overflow-hidden bg-[#222530] aspect-[3/4] relative">
+                  <div className="overflow-hidden bg-[#1A1C24] aspect-[9/16] relative">
                     <img
-                      src="/src/assets/images/arabi_portrait_1790455603241.jpg"
-                      alt="Portrait of Arabi in Chittagong, Bangladesh"
-                      className="w-full h-full object-cover object-center filter contrast-[1.02]"
+                      src="/src/assets/images/user_arabi_hero_1790501487356.jpg"
+                      alt="Arabi portrait in Chittagong, Bangladesh"
+                      className="w-full h-full object-cover object-center"
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -305,7 +309,7 @@ export default function App() {
 
                 {/* Subtle photo metadata underneath */}
                 <div className="mt-2.5 text-[10px] font-editorial-mono tracking-wider uppercase opacity-50 text-right">
-                  Plate 01 · Archival Matte
+                  Plate 01 · Authentic Print
                 </div>
               </div>
             </div>
@@ -318,7 +322,7 @@ export default function App() {
         {/* ABOUT SECTION */}
         <section id="about" className="space-y-6">
           <div className="flex items-center justify-between">
-            <span className="font-editorial-mono text-[10px] tracking-[0.25em] uppercase text-[#2946D3]">
+            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
               01 / ABOUT
             </span>
             <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
@@ -327,19 +331,16 @@ export default function App() {
           </div>
 
           <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
-            Questioning inherited assumptions before touching pixels or capital.
+            I Get Bored Easily, So I Make Things.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-2">
             <div className="md:col-span-8 space-y-4 font-editorial-sans text-sm sm:text-base leading-relaxed opacity-85">
-              <p>
-                I am a 20-year-old entrepreneur and designer born and based in Chittagong, Bangladesh. Rather than adopting mainstream tech dogma, I evaluate ventures through physical constraints: supply chain friction, capital turnover, and human incentive structures.
-              </p>
-              <p>
-                My design discipline is deliberately quiet. I do not design to stimulate or distract; I design to clarify. By treating typography, white space, and business architecture with equal seriousness, I build products that speak through their utility rather than decoration.
+              <p className="text-base sm:text-lg font-editorial-serif leading-snug">
+                Some become businesses. Some become designs. Some probably shouldn't have been made at all.
               </p>
               <p className="text-xs sm:text-sm opacity-70">
-                Independent by choice. Focused on building self-funding, high-margin operations that can endure outside the venture-subsidized cycle.
+                Independent by choice. Questioning conventional roadmaps, trying ideas, breaking them, rebuilding them, and retaining only the pieces that genuinely hold value.
               </p>
             </div>
 
@@ -355,7 +356,9 @@ export default function App() {
               </div>
               <div>
                 <span className="block text-[9px] uppercase tracking-widest opacity-50">Discipline</span>
-                <span className="mt-0.5 block font-medium">Entrepreneurship · Design</span>
+                <span className={`mt-0.5 block font-medium ${blueText}`}>
+                  Entrepreneur / creative director / whatever...
+                </span>
               </div>
               <div>
                 <span className="block text-[9px] uppercase tracking-widest opacity-50">Current Status</span>
@@ -374,8 +377,8 @@ export default function App() {
         {/* CURRENTLY / INTERESTS SECTION */}
         <section id="interests" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className="font-editorial-mono text-[10px] tracking-[0.25em] uppercase text-[#2946D3]">
-              02 / CURRENTLY & INQUIRIES
+            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+              02 / CURRENTLY & PURSUITS
             </span>
             <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
               Active Focus Vector
@@ -383,11 +386,11 @@ export default function App() {
           </div>
 
           <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
-            Current pursuits, critical readings, and operational interests.
+            Current pursuits, active crafts, and exploratory work.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-            {/* Card 1 */}
+            {/* Card 1: THE MISSING LINK */}
             <div
               className={`p-6 rounded-sm border transition-colors ${
                 isNoir
@@ -396,17 +399,17 @@ export default function App() {
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2946D3]" />
+                <span className={`w-1.5 h-1.5 rounded-full ${blueBg}`} />
                 <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
-                  Currently Building
+                  THE MISSING LINK
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-80">
-                Prototyping lean consumer brand models and digital dispatch systems tailored for Bangladesh’s domestic logistics. Testing physical-to-digital workflows that minimize middleman commissions.
+              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+                Building an adaptive learning platform for IELTS and SSC/HSC—teaching the shortcuts, patterns and overlooked techniques that conventional courses tend to miss.
               </p>
             </div>
 
-            {/* Card 2 */}
+            {/* Card 2: FASHION DESIGNING */}
             <div
               className={`p-6 rounded-sm border transition-colors ${
                 isNoir
@@ -417,15 +420,15 @@ export default function App() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
                 <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
-                  Critical Inquiries
+                  FASHION DESIGNING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-80">
-                Investigating information asymmetry in informal supply chains, the behavioral psychology of status signaling, and why excessive software complexity degrades human agency.
+              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+                Learning the craft from the ground up, from pattern-making and construction to developing my own pieces and eventually turning them into something of my own.
               </p>
             </div>
 
-            {/* Card 3 */}
+            {/* Card 3: EXPERIMENTING */}
             <div
               className={`p-6 rounded-sm border transition-colors ${
                 isNoir
@@ -434,17 +437,17 @@ export default function App() {
               }`}
             >
               <div className="flex items-center gap-2 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#2946D3]" />
+                <span className={`w-1.5 h-1.5 rounded-full ${blueBg}`} />
                 <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
-                  Reading & Foundations
+                  EXPERIMENTING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-80">
-                Classical political economy, Dieter Rams’ ten design axioms, maritime trade histories of the Bay of Bengal, and Swiss typographic proportion.
+              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+                Moving between business, design, clothing, photography and whatever else seems worth figuring out.
               </p>
             </div>
 
-            {/* Card 4 */}
+            {/* Card 4: LEARNING BY DOING */}
             <div
               className={`p-6 rounded-sm border transition-colors ${
                 isNoir
@@ -455,11 +458,11 @@ export default function App() {
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
                 <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
-                  Tools & Working Mediums
+                  LEARNING BY DOING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-80">
-                Figma, TypeScript, structural spreadsheets, financial sensitivity tables, vector drafting, and notebook manuscripts.
+              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+                Trying things, breaking them, rebuilding them—and keeping the useful parts.
               </p>
             </div>
           </div>
@@ -472,7 +475,7 @@ export default function App() {
         <section id="projects" className="space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <span className="font-editorial-mono text-[10px] tracking-[0.25em] uppercase text-[#2946D3]">
+              <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
                 03 / SELECTED WORK
               </span>
               <h2 className="mt-1 font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
@@ -498,7 +501,7 @@ export default function App() {
                   {/* Left: Index & Meta */}
                   <div className="space-y-2 flex-1">
                     <div className="flex flex-wrap items-center gap-2 text-xs font-editorial-mono">
-                      <span className="text-[#2946D3] font-semibold">
+                      <span className={`${blueText} font-semibold`}>
                         0{idx + 1}
                       </span>
                       <span className="opacity-30">/</span>
@@ -509,7 +512,7 @@ export default function App() {
                       <span className="opacity-50">{project.year}</span>
                     </div>
 
-                    <h3 className="font-editorial-serif text-2xl sm:text-3xl tracking-tight group-hover:text-[#2946D3] transition-colors">
+                    <h3 className={`font-editorial-serif text-2xl sm:text-3xl tracking-tight group-hover:${blueText} transition-colors`}>
                       {project.title}
                     </h3>
 
@@ -535,8 +538,8 @@ export default function App() {
                       onClick={() => setSelectedProject(project)}
                       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-editorial-mono uppercase tracking-wider transition-colors ${
                         isNoir
-                          ? 'bg-[#1E212D] text-[#F1EBDD] hover:bg-[#2946D3]'
-                          : 'bg-[#DFD7C3] text-[#101116] hover:bg-[#2946D3] hover:text-[#F1EBDD]'
+                          ? `bg-[#1E212D] text-[#F1EBDD] hover:${blueBg}`
+                          : `bg-[#DFD7C3] text-[#101116] hover:${blueBg} hover:text-[#F1EBDD]`
                       }`}
                     >
                       <span>Examine Case</span>
@@ -547,7 +550,7 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => setEditingProject(project)}
-                        className="inline-flex items-center gap-1 text-[11px] font-editorial-mono uppercase text-[#2946D3] hover:underline"
+                        className={`inline-flex items-center gap-1 text-[11px] font-editorial-mono uppercase ${blueText} hover:underline`}
                       >
                         <Sliders className="w-3 h-3" />
                         <span>Edit Data</span>
@@ -590,7 +593,7 @@ export default function App() {
         {/* APPROACH SECTION */}
         <section id="approach" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className="font-editorial-mono text-[10px] tracking-[0.25em] uppercase text-[#2946D3]">
+            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
               04 / WORKING APPROACH
             </span>
             <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
@@ -604,7 +607,7 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
             <div className="space-y-2">
-              <span className="font-editorial-mono text-xs text-[#2946D3] font-semibold">
+              <span className={`font-editorial-mono text-xs ${blueText} font-semibold`}>
                 01. FIRST-PRINCIPLES DIAGNOSTICS
               </span>
               <h3 className="font-editorial-serif text-xl">Deconstruct inherited consensus</h3>
@@ -624,7 +627,7 @@ export default function App() {
             </div>
 
             <div className="space-y-2">
-              <span className="font-editorial-mono text-xs text-[#2946D3] font-semibold">
+              <span className={`font-editorial-mono text-xs ${blueText} font-semibold`}>
                 03. REGIONAL LEVERAGE
               </span>
               <h3 className="font-editorial-serif text-xl">Operating from Chittagong</h3>
@@ -651,7 +654,7 @@ export default function App() {
         {/* CONTACT SECTION */}
         <section id="contact" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className="font-editorial-mono text-[10px] tracking-[0.25em] uppercase text-[#2946D3]">
+            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
               05 / DIRECT CORRESPONDENCE
             </span>
             <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
@@ -694,14 +697,14 @@ export default function App() {
                     aria-label="Copy email address"
                   >
                     {copiedEmail ? (
-                      <Check className="w-4 h-4 text-[#2946D3]" />
+                      <Check className={`w-4 h-4 ${blueText}`} />
                     ) : (
                       <Copy className="w-4 h-4 opacity-60" />
                     )}
                   </button>
                 </div>
                 {copiedEmail && (
-                  <span className="mt-1 block text-[10px] font-editorial-mono text-[#2946D3]">
+                  <span className={`mt-1 block text-[10px] font-editorial-mono ${blueText}`}>
                     Copied to clipboard.
                   </span>
                 )}
@@ -714,7 +717,7 @@ export default function App() {
                   <span>Chittagong 4000, Bangladesh</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-[#2946D3]" />
+                  <Clock className={`w-3.5 h-3.5 ${blueText}`} />
                   <span>Time Zone: GMT+6 (BST)</span>
                 </div>
               </div>
@@ -748,7 +751,7 @@ export default function App() {
                       : 'bg-[#ECE4D0] border-[#D6CDBC]'
                   }`}
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#2946D3]/15 text-[#2946D3] flex items-center justify-center mx-auto">
+                  <div className={`w-8 h-8 rounded-full ${isNoir ? 'bg-[#3D5CFF]/20 text-[#5577FF]' : 'bg-[#2946D3]/15 text-[#2946D3]'} flex items-center justify-center mx-auto`}>
                     <Check className="w-4 h-4" />
                   </div>
                   <h3 className="font-editorial-serif text-xl">Dispatch Received</h3>
@@ -761,7 +764,7 @@ export default function App() {
                       setFormSubmitted(false);
                       setContactForm({ name: '', email: '', subject: '', message: '' });
                     }}
-                    className="mt-2 text-xs font-editorial-mono uppercase tracking-wider text-[#2946D3] hover:underline"
+                    className={`mt-2 text-xs font-editorial-mono uppercase tracking-wider ${blueText} hover:underline`}
                   >
                     Send another note
                   </button>
@@ -788,7 +791,7 @@ export default function App() {
                           setContactForm({ ...contactForm, name: e.target.value })
                         }
                         placeholder="e.g. Tariq Rahman"
-                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                           isNoir
                             ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                             : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -807,7 +810,7 @@ export default function App() {
                           setContactForm({ ...contactForm, email: e.target.value })
                         }
                         placeholder="tariq@organization.org"
-                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                           isNoir
                             ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                             : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -828,7 +831,7 @@ export default function App() {
                         setContactForm({ ...contactForm, subject: e.target.value })
                       }
                       placeholder="e.g. Venture Partnership Inquiry"
-                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                         isNoir
                           ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                           : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -848,7 +851,7 @@ export default function App() {
                         setContactForm({ ...contactForm, message: e.target.value })
                       }
                       placeholder="Concise outline of what you'd like to discuss or build together."
-                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                         isNoir
                           ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                           : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -858,7 +861,7 @@ export default function App() {
 
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-sm bg-[#2946D3] text-[#F1EBDD] font-medium font-editorial-mono uppercase tracking-wider hover:bg-[#2039B0] transition-colors"
+                    className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-sm ${blueBg} text-[#F1EBDD] font-medium font-editorial-mono uppercase tracking-wider ${blueHover} transition-colors`}
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Transmit Correspondence</span>
@@ -890,7 +893,7 @@ export default function App() {
           <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider">
             <span>Layer 01: Editorial Monograph</span>
             <span>·</span>
-            <span className={isOtherwiseArmed ? 'text-[#2946D3] font-semibold' : 'opacity-50'}>
+            <span className={isOtherwiseArmed ? `${blueText} font-semibold` : 'opacity-50'}>
               {isOtherwiseArmed ? 'Otherwise: Armed' : 'Otherwise: Standby'}
             </span>
           </div>
