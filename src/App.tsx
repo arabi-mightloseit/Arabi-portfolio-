@@ -134,6 +134,14 @@ export default function App() {
   // Signature Switch state for "OTHERWISE" (structure for future creative reveal)
   const [isOtherwiseArmed, setIsOtherwiseArmed] = useState<boolean>(false);
 
+  const handleToggleArmed = (armed: boolean) => {
+    setIsOtherwiseArmed(armed);
+    window.scrollTo(0, 0);
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
+  };
+
   // Projects state (with localStorage persistence for editable placeholders)
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
@@ -283,7 +291,7 @@ export default function App() {
       {/* Top Bar with Top-Left Hardware Switch & 3-Zone Contract */}
       <Navigation
         isArmed={isOtherwiseArmed}
-        onToggleArmed={setIsOtherwiseArmed}
+        onToggleArmed={handleToggleArmed}
         theme={theme}
         onToggleTheme={handleToggleTheme}
       />
