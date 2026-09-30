@@ -71,35 +71,35 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-current/10">
+        <div className="flex items-center justify-between pb-3 border-b border-current/15">
           <div>
-            <span className={`font-editorial-mono text-[10px] tracking-[0.2em] uppercase ${blueText}`}>
+            <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
               Editable Placeholder
             </span>
-            <h3 className="font-editorial-sans text-base font-semibold">
+            <h3 className="font-editorial-serif text-2xl font-normal">
               Edit Project Details
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-sm hover:opacity-70 transition-opacity"
+            className="p-1.5 rounded-sm hover:opacity-70 transition-opacity cursor-pointer"
             aria-label="Close edit modal"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4 text-xs font-editorial-sans">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-4.5 text-sm font-editorial-sans">
           <div>
-            <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+            <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
               Project Title
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+              className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                 isNoir
                   ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                   : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -109,16 +109,16 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5">
             <div>
-              <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+              <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                 Category
               </label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                   isNoir
                     ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                     : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -128,14 +128,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               />
             </div>
             <div>
-              <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+              <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                 Year / Timeline
               </label>
               <input
                 type="text"
                 value={year}
                 onChange={(e) => setYear(e.target.value)}
-                className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                   isNoir
                     ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                     : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -147,14 +147,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
           </div>
 
           <div>
-            <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+            <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
               Brief Tagline
             </label>
             <input
               type="text"
               value={tagline}
               onChange={(e) => setTagline(e.target.value)}
-              className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+              className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                 isNoir
                   ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                   : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -164,14 +164,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
           </div>
 
           <div>
-            <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+            <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
               Description
             </label>
             <textarea
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+              className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                 isNoir
                   ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                   : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -181,14 +181,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
           </div>
 
           <div>
-            <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+            <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
               Core Focus Areas (comma separated)
             </label>
             <input
               type="text"
               value={focusStr}
               onChange={(e) => setFocusStr(e.target.value)}
-              className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+              className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                 isNoir
                   ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                   : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -198,14 +198,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
           </div>
 
           <div>
-            <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+            <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
               Key Deliverables (comma separated)
             </label>
             <input
               type="text"
               value={deliverablesStr}
               onChange={(e) => setDeliverablesStr(e.target.value)}
-              className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+              className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                 isNoir
                   ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                   : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -214,16 +214,16 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5">
             <div>
-              <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+              <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                 Link Label (optional)
               </label>
               <input
                 type="text"
                 value={linkText}
                 onChange={(e) => setLinkText(e.target.value)}
-                className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                   isNoir
                     ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                     : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -232,14 +232,14 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
               />
             </div>
             <div>
-              <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+              <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                 Link URL (optional)
               </label>
               <input
                 type="text"
                 value={linkUrl}
                 onChange={(e) => setLinkUrl(e.target.value)}
-                className={`w-full px-3 py-2 rounded-sm border focus:outline-none focus:border-[#2946D3] ${
+                className={`w-full px-3.5 py-2 rounded-sm border text-sm sm:text-base focus:outline-none ${blueFocusBorder} ${
                   isNoir
                     ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                     : 'bg-[#FFFFFF] border-[#D1C7B2] text-[#101116]'
@@ -249,21 +249,21 @@ export const EditProjectModal: React.FC<EditProjectModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-current/10">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-current/15">
             <button
               type="button"
               onClick={onClose}
-              className={`px-3 py-1.5 rounded-sm transition-colors ${
-                isNoir ? 'hover:bg-white/10 text-white/70' : 'hover:bg-black/10 text-black/70'
+              className={`px-4 py-2 rounded-sm text-xs sm:text-sm font-editorial-mono uppercase font-semibold transition-colors cursor-pointer ${
+                isNoir ? 'hover:bg-white/10 text-white/80' : 'hover:bg-black/10 text-black/80'
               }`}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className={`flex items-center gap-1.5 px-4 py-1.5 rounded-sm ${blueBg} text-[#F1EBDD] font-medium ${blueHover} transition-colors`}
+              className={`flex items-center gap-2 px-5 py-2 rounded-sm ${blueBg} text-[#F1EBDD] font-bold font-editorial-mono uppercase text-xs sm:text-sm tracking-wider ${blueHover} transition-colors cursor-pointer shadow-sm`}
             >
-              <Check className="w-3.5 h-3.5" />
+              <Check className="w-4 h-4" />
               Save Changes
             </button>
           </div>

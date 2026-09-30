@@ -19,53 +19,66 @@ export const Navigation: React.FC<NavigationProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isNoir = theme === 'noir';
 
-  const navLinks = [
-    { label: 'About', href: '#about' },
-    { label: 'Focus', href: '#interests' },
-    { label: 'Work', href: '#projects' },
-    { label: 'Approach', href: '#approach' },
-    { label: 'Contact', href: '#contact' },
-  ];
+  const navLinks = isArmed
+    ? []
+    : [
+        { label: 'About', href: '#about' },
+        { label: 'Focus', href: '#interests' },
+        { label: 'Work', href: '#projects' },
+        { label: 'Approach', href: '#approach' },
+        { label: 'Contact', href: '#contact' },
+      ];
+
+  // Smooth editorial glide navigation with sticky header offset compensation
+  const handleGlide = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    if (element) {
+      const headerOffset = 70;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+    setMobileMenuOpen(false);
+  };
 
   return (
     <header
       className={`sticky top-0 z-40 w-full transition-colors duration-200 border-b backdrop-blur-md ${
-        isNoir
+        isArmed
+          ? 'bg-[#06070A]/92 border-[#1E2235] text-[#F1EBDD]'
+          : isNoir
           ? 'bg-[#101116]/92 border-[#202330] text-[#F1EBDD]'
           : 'bg-[#F1EBDD]/92 border-[#D8CEBA] text-[#101116]'
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-14 md:h-16 flex items-center justify-between gap-4">
-        {/* Left Zone: Signature Switch Hardware + Wordmark */}
-        <div className="flex items-center gap-4 sm:gap-6">
-          {/* Top-left Signature Switch */}
+        {/* Left Zone: Signature Switch Hardware */}
+        <div className="flex items-center">
+          {/* Top-left Enlarged Signature Switch */}
           <SignatureSwitch
             isArmed={isArmed}
             onToggle={onToggleArmed}
             theme={theme}
           />
-
-          <div className="h-4 w-[1px] bg-current opacity-15 hidden sm:block" />
-
-          {/* Clean Wordmark */}
-          <a
-            href="#"
-            className="font-editorial-serif text-lg tracking-wider font-normal hover:opacity-80 transition-opacity whitespace-nowrap"
-          >
-            ARABI
-          </a>
         </div>
 
         {/* Center Zone: Clean Nav Links (Desktop) */}
-        <nav className="hidden md:flex items-center gap-7 text-xs font-editorial-sans font-medium tracking-wide">
+        <nav className="hidden md:flex items-center gap-8 text-sm font-editorial-sans font-semibold tracking-wide">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className={`transition-colors duration-150 relative py-1 ${
+              onClick={(e) => handleGlide(e, link.href)}
+              className={`transition-colors duration-150 relative py-1 cursor-pointer ${
                 isNoir
-                  ? 'text-[#F1EBDD]/70 hover:text-[#5577FF]'
-                  : 'text-[#101116]/70 hover:text-[#2946D3]'
+                  ? 'text-[#F1EBDD]/80 hover:text-[#5577FF]'
+                  : 'text-[#101116]/80 hover:text-[#2946D3]'
               }`}
             >
               {link.label}
@@ -75,28 +88,30 @@ export const Navigation: React.FC<NavigationProps> = ({
 
         {/* Right Zone: Palette Mode Toggle & Mobile Menu Trigger */}
         <div className="flex items-center gap-3">
-          {/* Palette Mode Selector [Noir / Ivory] */}
-          <button
-            type="button"
-            onClick={onToggleTheme}
-            className={`font-editorial-mono text-[10px] tracking-[0.16em] uppercase px-2.5 py-1 rounded-sm border transition-colors whitespace-nowrap ${
-              isNoir
-                ? 'border-[#2E3345] hover:border-[#4B526B] bg-[#181A22] text-[#F1EBDD]/80 hover:text-[#F1EBDD]'
-                : 'border-[#CCC1AB] hover:border-[#9E937D] bg-[#E8DFC9] text-[#101116]/80 hover:text-[#101116]'
-            }`}
-            title="Toggle between Pure Black (#101116) and Warm Ivory (#F1EBDD)"
-          >
-            <span className="opacity-50">CANVAS:</span>{' '}
-            <span className={`font-semibold ${isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]'}`}>
-              {isNoir ? 'NOIR' : 'IVORY'}
-            </span>
-          </button>
+          {/* Palette Mode Selector [Noir / Ivory] - Hidden on Section W artistic */}
+          {!isArmed && (
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className={`font-editorial-mono text-xs tracking-[0.16em] uppercase px-3 py-1.5 rounded-sm border-2 font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                isNoir
+                  ? 'border-[#383E54] hover:border-[#525B7C] bg-[#181A22] text-[#F1EBDD] hover:bg-[#202330]'
+                  : 'border-[#BAAE96] hover:border-[#8E826B] bg-[#E8DFC9] text-[#101116] hover:bg-[#DDD3BC]'
+              }`}
+              title="Toggle between Pure Black (#101116) and Warm Ivory (#F1EBDD)"
+            >
+              <span className="opacity-60">CANVAS:</span>{' '}
+              <span className={`font-bold ${isNoir ? 'text-[#5577FF]' : 'text-[#2946D3]'}`}>
+                {isNoir ? 'NOIR' : 'IVORY'}
+              </span>
+            </button>
+          )}
 
           {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 rounded-sm hover:opacity-75 transition-opacity"
+            className="md:hidden p-1.5 rounded-sm hover:opacity-75 transition-opacity cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -117,7 +132,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             <a
               key={link.label}
               href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => handleGlide(e, link.href)}
               className={`block py-1 opacity-80 hover:opacity-100 ${
                 isNoir ? 'hover:text-[#5577FF]' : 'hover:text-[#2946D3]'
               }`}

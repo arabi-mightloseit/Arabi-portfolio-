@@ -3,12 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
+import arabiHeroPhoto from './assets/images/1789934975007~2.jpg';
+import signaturePng from './assets/images/20260117_020006-removebg-preview.png';
 import { Navigation } from './components/Navigation';
 import { ProjectModal } from './components/ProjectModal';
 import { EditProjectModal } from './components/EditProjectModal';
 import { ArabiSignature } from './components/ArabiSignature';
+import { ArtisticSectionW } from './components/ArtisticSectionW';
+import { LiquidScreenPhoto } from './components/LiquidScreenPhoto';
 import { Project, ThemeMode } from './types';
+import { playPaperCrunch, playDarkAmbient } from './utils/audio';
 import {
   ArrowUpRight,
   Copy,
@@ -155,6 +163,34 @@ export default function App() {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  // Lenis ultra smooth scrolling instance
+  const lenisRef = useRef<Lenis | null>(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+    });
+    lenisRef.current = lenis;
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, []);
+
   // Current Chittagong local time calculation
   const [bdTime, setBdTime] = useState('');
   useEffect(() => {
@@ -189,9 +225,37 @@ export default function App() {
 
   const handleCopyEmail = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigator.clipboard.writeText('arabi.creative@pm.me');
+    navigator.clipboard.writeText('sifat.01938168@gmail.com');
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2400);
+  };
+
+  const handleToggleTheme = () => {
+    const nextTheme = theme === 'noir' ? 'ivory' : 'noir';
+    setTheme(nextTheme);
+    if (nextTheme === 'ivory') {
+      playPaperCrunch();
+    } else {
+      playDarkAmbient();
+    }
+  };
+
+  const handleGlideTo = (e: React.MouseEvent, targetId: string) => {
+    e.preventDefault();
+    const element = document.getElementById(targetId);
+    if (element) {
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(element, { offset: -70 });
+      } else {
+        const headerOffset = 70;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+    }
   };
 
   const handleContactSubmit = (e: React.FormEvent) => {
@@ -209,7 +273,9 @@ export default function App() {
   return (
     <div
       className={`min-h-screen transition-colors duration-200 theme-${theme} selection:bg-[#3D5CFF] selection:text-[#F1EBDD] ${
-        isNoir
+        isOtherwiseArmed
+          ? 'bg-[#06070A] text-[#F1EBDD]'
+          : isNoir
           ? 'bg-[#101116] text-[#F1EBDD]'
           : 'bg-[#F1EBDD] text-[#101116]'
       }`}
@@ -219,98 +285,107 @@ export default function App() {
         isArmed={isOtherwiseArmed}
         onToggleArmed={setIsOtherwiseArmed}
         theme={theme}
-        onToggleTheme={() => setTheme(isNoir ? 'ivory' : 'noir')}
+        onToggleTheme={handleToggleTheme}
       />
 
-      {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-5 sm:px-8 py-12 md:py-20 space-y-24 md:space-y-32">
+      {/* Main Content Area - Switches between Section W (Digital Exhibition) and Section L (Editorial Monograph) */}
+      {isOtherwiseArmed ? (
+        <ArtisticSectionW
+          theme={theme}
+          bdTime={bdTime}
+        />
+      ) : (
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 md:pt-10 pb-16 md:pb-24 space-y-20 md:space-y-28">
         
         {/* HERO SECTION */}
-        <section id="hero" className="pt-4 md:pt-8">
-          {/* Top geographic baseline */}
-          <div className="flex flex-wrap items-center gap-2.5 text-xs font-editorial-mono tracking-widest uppercase opacity-65 mb-8">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
+        <section id="hero" className="pt-1 md:pt-4">
+          {/* Top geographic baseline - Phase 1 */}
+          <div className="animate-reveal-1 flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-editorial-mono tracking-wider uppercase opacity-85 font-medium mb-5 sm:mb-7">
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#E83B2E]" />
               CHITTAGONG, BANGLADESH
             </span>
             <span aria-hidden="true" className="opacity-40">·</span>
-            <span className="flex items-center gap-1">
-              <Clock className={`w-3 h-3 ${blueText}`} />
+            <span className="flex items-center gap-1.5">
+              <Clock className={`w-3.5 h-3.5 ${blueText}`} />
               {bdTime ? `${bdTime} BST (GMT+6)` : 'GMT+6'}
             </span>
             <span aria-hidden="true" className="opacity-40">·</span>
             <span>20 YEARS OLD</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-start">
             {/* Left Typography Block */}
-            <div className="md:col-span-7 space-y-6">
-              <div>
-                <h1 className="font-editorial-serif text-5xl sm:text-6xl md:text-7xl font-normal tracking-tight leading-[1.05]">
+            <div className="md:col-span-7 space-y-5">
+              {/* Phase 1: Name reveals first */}
+              <div className="animate-reveal-1 space-y-1.5">
+                <span className="block font-editorial-mono text-xs sm:text-sm md:text-base tracking-[0.24em] uppercase opacity-75 font-semibold">
+                  SIFAT SIDDIQUE
+                </span>
+                <h1 className="font-editorial-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-[0.98]">
                   ARABI
                 </h1>
-                <p className={`mt-3 font-editorial-mono text-xs sm:text-sm tracking-[0.16em] uppercase ${blueText} font-medium`}>
+              </div>
+
+              {/* Phase 2: What I do reveals with photo */}
+              <div className="animate-reveal-2 space-y-3">
+                <p className={`font-editorial-mono text-xs sm:text-sm md:text-base tracking-[0.16em] uppercase ${blueText} font-semibold`}>
                   Entrepreneur / creative director / whatever...
                 </p>
-              </div>
-
-              <div className="pt-2 text-sm sm:text-base font-editorial-sans leading-relaxed opacity-85 space-y-4">
-                <p>
-                  I build independent ventures and design minimal systems from Chittagong. My work is defined by severe restraint: stripping away cosmetic trends, questioning industry assumptions, and constructing resilient models from first principles.
-                </p>
-                <p className="text-xs sm:text-sm opacity-70">
-                  Moving between business, design, clothing, photography and whatever else seems worth figuring out.
-                </p>
-              </div>
-
-              {/* Direct Action Anchors */}
-              <div className="pt-4 flex flex-wrap items-center gap-4 text-xs font-editorial-mono tracking-wider uppercase">
-                <a
-                  href="#projects"
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-sm ${blueBg} text-[#F1EBDD] font-medium ${blueHover} transition-colors`}
-                >
-                  <span>Selected Work</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-
-                <a
-                  href="#about"
-                  className={`inline-flex items-center gap-1 px-3 py-2 rounded-sm border transition-colors ${
-                    isNoir
-                      ? 'border-[#2A2E3D] hover:border-[#4B526B] text-[#F1EBDD]/80'
-                      : 'border-[#CCC1AB] hover:border-[#8E836D] text-[#101116]/80'
-                  }`}
-                >
-                  <span>Read Profile</span>
-                </a>
+                <div className="pt-1 font-editorial-serif text-base sm:text-lg md:text-xl leading-relaxed opacity-95">
+                  <p>
+                    Moving between business, design, clothing, photography and whatever else seems worth figuring out.
+                  </p>
+                </div>
               </div>
             </div>
 
             {/* Right Photo Block:
-                Displaying Arabi's original photo keeping the thick white border without artificial retouching */}
+                Polaroid framed portrait with subtle architectural fading background grid,
+                'Commercial headshot' caption, and action buttons directly below */}
             <div className="md:col-span-5 flex flex-col items-center md:items-end">
-              <div className="relative group">
-                {/* Thick pure white exhibition border */}
-                <div className="p-3 md:p-3.5 bg-white border border-black/15 shadow-sm max-w-[280px] sm:max-w-[320px]">
-                  <div className="overflow-hidden bg-[#1A1C24] aspect-[9/16] relative">
-                    <img
-                      src="/src/assets/images/user_arabi_hero_1790501487356.jpg"
-                      alt="Arabi portrait in Chittagong, Bangladesh"
-                      className="w-full h-full object-cover object-center"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                  {/* Photo Caption inside the white archival border */}
-                  <div className="pt-2.5 pb-0.5 px-0.5 flex items-center justify-between text-[9px] font-editorial-mono text-[#101116] uppercase tracking-widest border-t border-black/10 mt-2">
-                    <span className="font-semibold">ARABI</span>
-                    <span className="opacity-70">CHITTAGONG · 2026</span>
-                  </div>
-                </div>
+              {/* Phase 2: Picture reveals smoothly with what I do */}
+              <div className="animate-reveal-2 relative group w-full flex flex-col items-center md:items-end">
+                {/* Subtle architectural fading grid around the Polaroid */}
+                <div
+                  className={`absolute -inset-6 sm:-inset-8 pointer-events-none transition-opacity duration-300 z-0 ${
+                    isNoir ? 'polaroid-grid-noir' : 'polaroid-grid-ivory'
+                  }`}
+                  aria-hidden="true"
+                />
 
-                {/* Subtle photo metadata underneath */}
-                <div className="mt-2.5 text-[10px] font-editorial-mono tracking-wider uppercase opacity-50 text-right">
-                  Plate 01 · Authentic Print
-                </div>
+                <LiquidScreenPhoto
+                  theme={theme}
+                  isArtisticMode={false}
+                  onClick={() => {
+                    if (isNoir) playDarkAmbient();
+                    else playPaperCrunch();
+                  }}
+                />
+              </div>
+
+              {/* Phase 3: Action Buttons placed directly below the photo */}
+              <div className="animate-reveal-3 mt-4 sm:mt-5 flex flex-wrap items-center justify-center md:justify-end gap-3 text-xs sm:text-sm font-editorial-mono tracking-wider uppercase font-semibold w-full">
+                <a
+                  href="#projects"
+                  onClick={(e) => handleGlideTo(e, 'projects')}
+                  className={`inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-sm ${blueBg} text-[#F1EBDD] font-bold ${blueHover} transition-colors shadow-sm cursor-pointer`}
+                >
+                  <span>Selected Work</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+
+                <a
+                  href="#about"
+                  onClick={(e) => handleGlideTo(e, 'about')}
+                  className={`inline-flex items-center gap-1 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-sm border-2 transition-colors font-medium cursor-pointer ${
+                    isNoir
+                      ? 'border-[#33384D] hover:border-[#535D80] text-[#F1EBDD]'
+                      : 'border-[#BEB19A] hover:border-[#83765E] text-[#101116]'
+                  }`}
+                >
+                  <span>Read Profile</span>
+                </a>
               </div>
             </div>
           </div>
@@ -322,48 +397,54 @@ export default function App() {
         {/* ABOUT SECTION */}
         <section id="about" className="space-y-6">
           <div className="flex items-center justify-between">
-            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+            <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
               01 / ABOUT
             </span>
-            <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
+            <span className="font-editorial-mono text-xs sm:text-sm tracking-wider uppercase opacity-70 font-medium">
               Biography & Background
             </span>
           </div>
 
-          <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
+          <h2 className="font-editorial-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
             I Get Bored Easily, So I Make Things.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pt-2">
-            <div className="md:col-span-8 space-y-4 font-editorial-sans text-sm sm:text-base leading-relaxed opacity-85">
-              <p className="text-base sm:text-lg font-editorial-serif leading-snug">
+            <div className="md:col-span-8 space-y-5 font-editorial-sans text-base sm:text-lg leading-relaxed opacity-90">
+              <p className="text-xl sm:text-2xl font-editorial-serif leading-snug text-current">
                 Some become businesses. Some become designs. Some probably shouldn't have been made at all.
               </p>
-              <p className="text-xs sm:text-sm opacity-70">
+              <p className="text-sm sm:text-base opacity-80 leading-relaxed">
                 Independent by choice. Questioning conventional roadmaps, trying ideas, breaking them, rebuilding them, and retaining only the pieces that genuinely hold value.
               </p>
             </div>
 
             {/* Quick Metadata Column */}
-            <div className="md:col-span-4 space-y-4 font-editorial-mono text-xs border-l pl-5 border-current/15">
+            <div className="md:col-span-4 space-y-4 font-editorial-mono text-xs sm:text-sm border-l-2 pl-5 border-current/15">
               <div>
-                <span className="block text-[9px] uppercase tracking-widest opacity-50">Location</span>
-                <span className="mt-0.5 block font-medium">Chittagong, Bangladesh</span>
+                <span className="block text-xs uppercase tracking-wider font-semibold opacity-65">Identity</span>
+                <span className="mt-0.5 block font-editorial-sans font-medium text-sm sm:text-base">
+                  Sifat Siddique <span className={`font-bold ${blueText}`}>"Arabi"</span>
+                </span>
               </div>
               <div>
-                <span className="block text-[9px] uppercase tracking-widest opacity-50">Age</span>
-                <span className="mt-0.5 block font-medium">20 Years</span>
+                <span className="block text-xs uppercase tracking-wider font-semibold opacity-65">Location</span>
+                <span className="mt-0.5 block font-editorial-sans font-medium text-sm sm:text-base">Chittagong, Bangladesh</span>
               </div>
               <div>
-                <span className="block text-[9px] uppercase tracking-widest opacity-50">Discipline</span>
-                <span className={`mt-0.5 block font-medium ${blueText}`}>
+                <span className="block text-xs uppercase tracking-wider font-semibold opacity-65">Age</span>
+                <span className="mt-0.5 block font-editorial-sans font-medium text-sm sm:text-base">20 Years</span>
+              </div>
+              <div>
+                <span className="block text-xs uppercase tracking-wider font-semibold opacity-65">Discipline</span>
+                <span className={`mt-0.5 block font-editorial-sans font-medium text-sm sm:text-base ${blueText}`}>
                   Entrepreneur / creative director / whatever...
                 </span>
               </div>
               <div>
-                <span className="block text-[9px] uppercase tracking-widest opacity-50">Current Status</span>
-                <span className="mt-0.5 flex items-center gap-1.5 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
+                <span className="block text-xs uppercase tracking-wider font-semibold opacity-65">Current Status</span>
+                <span className="mt-0.5 flex items-center gap-2 font-editorial-sans font-medium text-sm sm:text-base">
+                  <span className="w-2 h-2 rounded-full bg-[#E83B2E]" />
                   Active on independent initiatives
                 </span>
               </div>
@@ -377,91 +458,91 @@ export default function App() {
         {/* CURRENTLY / INTERESTS SECTION */}
         <section id="interests" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+            <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
               02 / CURRENTLY & PURSUITS
             </span>
-            <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
+            <span className="font-editorial-mono text-xs sm:text-sm tracking-wider uppercase opacity-70 font-medium">
               Active Focus Vector
             </span>
           </div>
 
-          <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
+          <h2 className="font-editorial-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
             Current pursuits, active crafts, and exploratory work.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
             {/* Card 1: THE MISSING LINK */}
             <div
-              className={`p-6 rounded-sm border transition-colors ${
+              className={`p-6 sm:p-7 rounded-sm border transition-colors ${
                 isNoir
-                  ? 'bg-[#14161F] border-[#222636]'
-                  : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                  ? 'bg-[#14161F] border-[#252A3C]'
+                  : 'bg-[#ECE4D0] border-[#D4CABB]'
               }`}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`w-1.5 h-1.5 rounded-full ${blueBg}`} />
-                <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className={`w-2 h-2 rounded-full ${blueBg}`} />
+                <h3 className="font-editorial-mono text-sm sm:text-base uppercase tracking-wider font-bold">
                   THE MISSING LINK
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+              <p className="font-editorial-sans text-sm sm:text-base leading-relaxed opacity-95">
                 Building an adaptive learning platform for IELTS and SSC/HSC—teaching the shortcuts, patterns and overlooked techniques that conventional courses tend to miss.
               </p>
             </div>
 
             {/* Card 2: FASHION DESIGNING */}
             <div
-              className={`p-6 rounded-sm border transition-colors ${
+              className={`p-6 sm:p-7 rounded-sm border transition-colors ${
                 isNoir
-                  ? 'bg-[#14161F] border-[#222636]'
-                  : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                  ? 'bg-[#14161F] border-[#252A3C]'
+                  : 'bg-[#ECE4D0] border-[#D4CABB]'
               }`}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
-                <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="w-2 h-2 rounded-full bg-[#E83B2E]" />
+                <h3 className="font-editorial-mono text-sm sm:text-base uppercase tracking-wider font-bold">
                   FASHION DESIGNING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+              <p className="font-editorial-sans text-sm sm:text-base leading-relaxed opacity-95">
                 Learning the craft from the ground up, from pattern-making and construction to developing my own pieces and eventually turning them into something of my own.
               </p>
             </div>
 
             {/* Card 3: EXPERIMENTING */}
             <div
-              className={`p-6 rounded-sm border transition-colors ${
+              className={`p-6 sm:p-7 rounded-sm border transition-colors ${
                 isNoir
-                  ? 'bg-[#14161F] border-[#222636]'
-                  : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                  ? 'bg-[#14161F] border-[#252A3C]'
+                  : 'bg-[#ECE4D0] border-[#D4CABB]'
               }`}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className={`w-1.5 h-1.5 rounded-full ${blueBg}`} />
-                <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className={`w-2 h-2 rounded-full ${blueBg}`} />
+                <h3 className="font-editorial-mono text-sm sm:text-base uppercase tracking-wider font-bold">
                   EXPERIMENTING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+              <p className="font-editorial-sans text-sm sm:text-base leading-relaxed opacity-95">
                 Moving between business, design, clothing, photography and whatever else seems worth figuring out.
               </p>
             </div>
 
             {/* Card 4: LEARNING BY DOING */}
             <div
-              className={`p-6 rounded-sm border transition-colors ${
+              className={`p-6 sm:p-7 rounded-sm border transition-colors ${
                 isNoir
-                  ? 'bg-[#14161F] border-[#222636]'
-                  : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                  ? 'bg-[#14161F] border-[#252A3C]'
+                  : 'bg-[#ECE4D0] border-[#D4CABB]'
               }`}
             >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
-                <h3 className="font-editorial-mono text-xs uppercase tracking-widest font-semibold">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="w-2 h-2 rounded-full bg-[#E83B2E]" />
+                <h3 className="font-editorial-mono text-sm sm:text-base uppercase tracking-wider font-bold">
                   LEARNING BY DOING
                 </h3>
               </div>
-              <p className="font-editorial-sans text-xs sm:text-sm leading-relaxed opacity-85">
+              <p className="font-editorial-sans text-sm sm:text-base leading-relaxed opacity-95">
                 Trying things, breaking them, rebuilding them—and keeping the useful parts.
               </p>
             </div>
@@ -475,56 +556,75 @@ export default function App() {
         <section id="projects" className="space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+              <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
                 03 / SELECTED WORK
               </span>
-              <h2 className="mt-1 font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
+              <h2 className="mt-1 font-editorial-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                 Case studies, monographs & active placeholders
               </h2>
             </div>
-            <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-50">
+            <span className="font-editorial-mono text-xs sm:text-sm tracking-wider uppercase opacity-70 font-medium">
               4 Selected Archives
             </span>
           </div>
 
           <div className="space-y-6">
             {projects.map((project, idx) => (
-              <div
+              <motion.div
                 key={project.id}
-                className={`group p-6 sm:p-7 rounded-sm border transition-all duration-200 ${
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{
+                  duration: 0.42,
+                  delay: idx * 0.07,
+                  ease: [0.21, 0.47, 0.32, 0.98],
+                }}
+                whileHover={{
+                  y: -5,
+                  scale: 1.008,
+                  transition: { duration: 0.22, ease: 'easeOut' },
+                }}
+                whileTap={{
+                  scale: 0.985,
+                  y: -1,
+                  transition: { duration: 0.1, ease: 'easeOut' },
+                }}
+                onClick={() => setSelectedProject(project)}
+                className={`group p-6 sm:p-8 rounded-sm border transition-all duration-200 cursor-pointer ${
                   isNoir
-                    ? 'bg-[#13151D] border-[#222636] hover:border-[#383E54]'
-                    : 'bg-[#EFE7D5] border-[#D6CDBC] hover:border-[#B2A791]'
+                    ? 'bg-[#13151D] border-[#222636] hover:border-[#4B5578] hover:shadow-[0_16px_36px_-12px_rgba(0,0,0,0.85),0_0_12px_rgba(85,119,255,0.22)]'
+                    : 'bg-[#EFE7D5] border-[#D6CDBC] hover:border-[#9C8F73] hover:shadow-[0_16px_36px_-12px_rgba(40,30,20,0.16),0_0_12px_rgba(41,70,211,0.22)]'
                 }`}
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   {/* Left: Index & Meta */}
                   <div className="space-y-2 flex-1">
-                    <div className="flex flex-wrap items-center gap-2 text-xs font-editorial-mono">
-                      <span className={`${blueText} font-semibold`}>
+                    <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-editorial-mono font-medium">
+                      <span className={`${blueText} font-bold`}>
                         0{idx + 1}
                       </span>
-                      <span className="opacity-30">/</span>
-                      <span className="uppercase tracking-widest opacity-60">
+                      <span className="opacity-40">/</span>
+                      <span className="uppercase tracking-wider opacity-75 font-semibold">
                         {project.category}
                       </span>
-                      <span className="opacity-30">·</span>
-                      <span className="opacity-50">{project.year}</span>
+                      <span className="opacity-40">·</span>
+                      <span className="opacity-65">{project.year}</span>
                     </div>
 
-                    <h3 className={`font-editorial-serif text-2xl sm:text-3xl tracking-tight group-hover:${blueText} transition-colors`}>
+                    <h3 className={`font-editorial-serif text-2xl sm:text-3xl md:text-4xl tracking-tight group-hover:${blueText} transition-colors duration-200`}>
                       {project.title}
                     </h3>
 
-                    <p className="font-editorial-sans text-xs sm:text-sm opacity-80 leading-relaxed max-w-2xl">
+                    <p className="font-editorial-sans text-sm sm:text-base opacity-90 leading-relaxed max-w-2xl">
                       {project.tagline || project.description}
                     </p>
 
                     {/* Tag list */}
-                    <div className="pt-2 flex flex-wrap gap-2 text-[10px] font-editorial-mono opacity-60">
+                    <div className="pt-2 flex flex-wrap gap-2.5 text-xs font-editorial-mono opacity-80 font-medium">
                       {project.focus.slice(0, 3).map((item, i) => (
-                        <span key={i} className="flex items-center gap-1">
-                          <span className="w-1 h-1 rounded-full bg-[#E83B2E]" />
+                        <span key={i} className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#E83B2E]" />
                           {item}
                         </span>
                       ))}
@@ -533,37 +633,52 @@ export default function App() {
 
                   {/* Right Actions */}
                   <div className="flex md:flex-col items-center md:items-end justify-between gap-3 pt-2 md:pt-0 shrink-0">
-                    <button
+                    <motion.button
                       type="button"
-                      onClick={() => setSelectedProject(project)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-editorial-mono uppercase tracking-wider transition-colors ${
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.92 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedProject(project);
+                      }}
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-sm text-xs sm:text-sm font-editorial-mono uppercase tracking-wider font-semibold transition-colors cursor-pointer ${
                         isNoir
                           ? `bg-[#1E212D] text-[#F1EBDD] hover:${blueBg}`
                           : `bg-[#DFD7C3] text-[#101116] hover:${blueBg} hover:text-[#F1EBDD]`
                       }`}
                     >
                       <span>Examine Case</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </button>
+                      <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </motion.button>
 
                     {project.isEditable && (
-                      <button
+                      <motion.button
                         type="button"
-                        onClick={() => setEditingProject(project)}
-                        className={`inline-flex items-center gap-1 text-[11px] font-editorial-mono uppercase ${blueText} hover:underline`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.92 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingProject(project);
+                        }}
+                        className={`inline-flex items-center gap-1 text-xs font-editorial-mono uppercase font-semibold ${blueText} hover:underline cursor-pointer`}
                       >
-                        <Sliders className="w-3 h-3" />
+                        <Sliders className="w-3.5 h-3.5" />
                         <span>Edit Data</span>
-                      </button>
+                      </motion.button>
                     )}
                   </div>
                 </div>
 
                 {/* Inline project thumbnail preview if image exists */}
                 {project.image && (
-                  <div
-                    onClick={() => setSelectedProject(project)}
-                    className="mt-5 overflow-hidden rounded-sm border border-current/10 cursor-pointer max-h-48 relative group/img"
+                  <motion.div
+                    whileHover={{ scale: 1.012 }}
+                    whileTap={{ scale: 0.985 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedProject(project);
+                    }}
+                    className="mt-5 overflow-hidden rounded-sm border border-current/10 cursor-pointer max-h-56 relative group/img"
                   >
                     <img
                       src={project.image}
@@ -571,20 +686,23 @@ export default function App() {
                       className="w-full h-full object-cover object-center filter grayscale group-hover/img:grayscale-0 transition-all duration-300"
                       referrerPolicy="no-referrer"
                     />
-                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="font-editorial-mono text-[10px] tracking-widest uppercase bg-black/80 text-white px-2.5 py-1 rounded-sm">
+                    <div className="absolute inset-0 bg-black/25 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="font-editorial-mono text-xs tracking-wider uppercase bg-black/85 text-white px-3 py-1.5 rounded-sm font-semibold">
                         View Specification
                       </span>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          <div className="p-4 rounded-sm border border-dashed border-current/20 text-center font-editorial-mono text-xs opacity-60">
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="p-4 rounded-sm border border-dashed border-current/25 text-center font-editorial-mono text-xs sm:text-sm opacity-70 font-medium"
+          >
             Note: Placeholders 03 & 04 can be customized directly using the [Edit Data] button.
-          </div>
+          </motion.div>
         </section>
 
         {/* SECTION DIVIDER */}
@@ -593,55 +711,55 @@ export default function App() {
         {/* APPROACH SECTION */}
         <section id="approach" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+            <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
               04 / WORKING APPROACH
             </span>
-            <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
+            <span className="font-editorial-mono text-xs sm:text-sm tracking-wider uppercase opacity-70 font-medium">
               Core Axioms
             </span>
           </div>
 
-          <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
+          <h2 className="font-editorial-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
             Four guiding constraints behind all creative & commercial output.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
-            <div className="space-y-2">
-              <span className={`font-editorial-mono text-xs ${blueText} font-semibold`}>
+            <div className="space-y-2.5">
+              <span className={`font-editorial-mono text-xs sm:text-sm ${blueText} font-bold tracking-wider`}>
                 01. FIRST-PRINCIPLES DIAGNOSTICS
               </span>
-              <h3 className="font-editorial-serif text-xl">Deconstruct inherited consensus</h3>
-              <p className="font-editorial-sans text-xs sm:text-sm opacity-80 leading-relaxed">
+              <h3 className="font-editorial-serif text-2xl sm:text-3xl">Deconstruct inherited consensus</h3>
+              <p className="font-editorial-sans text-sm sm:text-base opacity-90 leading-relaxed">
                 Most industry practices are habits rather than necessities. We isolate the physical, technical, and psychological truths of a problem before committing capital or design labor.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <span className="font-editorial-mono text-xs text-[#E83B2E] font-semibold">
+            <div className="space-y-2.5">
+              <span className="font-editorial-mono text-xs sm:text-sm text-[#E83B2E] font-bold tracking-wider">
                 02. SEVERE VISUAL RESTRAINT
               </span>
-              <h3 className="font-editorial-serif text-xl">Zero ornamental noise</h3>
-              <p className="font-editorial-sans text-xs sm:text-sm opacity-80 leading-relaxed">
+              <h3 className="font-editorial-serif text-2xl sm:text-3xl">Zero ornamental noise</h3>
+              <p className="font-editorial-sans text-sm sm:text-base opacity-90 leading-relaxed">
                 Visual fireworks mask structural weaknesses. By rejecting gratuitous animations, gradients, and bloated cards, the typography and value proposition must stand entirely on their own merit.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <span className={`font-editorial-mono text-xs ${blueText} font-semibold`}>
+            <div className="space-y-2.5">
+              <span className={`font-editorial-mono text-xs sm:text-sm ${blueText} font-bold tracking-wider`}>
                 03. REGIONAL LEVERAGE
               </span>
-              <h3 className="font-editorial-serif text-xl">Operating from Chittagong</h3>
-              <p className="font-editorial-sans text-xs sm:text-sm opacity-80 leading-relaxed">
+              <h3 className="font-editorial-serif text-2xl sm:text-3xl">Operating from Chittagong</h3>
+              <p className="font-editorial-sans text-sm sm:text-base opacity-90 leading-relaxed">
                 Building from Bangladesh provides an immediate grounding in physical logistics, cost efficiency, and informal commercial realities that Silicon Valley abstractions fail to perceive.
               </p>
             </div>
 
-            <div className="space-y-2">
-              <span className="font-editorial-mono text-xs text-[#E83B2E] font-semibold">
+            <div className="space-y-2.5">
+              <span className="font-editorial-mono text-xs sm:text-sm text-[#E83B2E] font-bold tracking-wider">
                 04. PATIENT AUTONOMY
               </span>
-              <h3 className="font-editorial-serif text-xl">Enduring unit economics</h3>
-              <p className="font-editorial-sans text-xs sm:text-sm opacity-80 leading-relaxed">
+              <h3 className="font-editorial-serif text-2xl sm:text-3xl">Enduring unit economics</h3>
+              <p className="font-editorial-sans text-sm sm:text-base opacity-90 leading-relaxed">
                 A venture that cannot survive on customer revenue is fundamentally incomplete. We prioritize self-sustaining operational models, conservative leverage, and independent ownership.
               </p>
             </div>
@@ -654,10 +772,10 @@ export default function App() {
         {/* CONTACT SECTION */}
         <section id="contact" className="space-y-8">
           <div className="flex items-center justify-between">
-            <span className={`font-editorial-mono text-[10px] tracking-[0.25em] uppercase ${blueText}`}>
+            <span className={`font-editorial-mono text-xs sm:text-sm tracking-[0.2em] uppercase font-bold ${blueText}`}>
               05 / DIRECT CORRESPONDENCE
             </span>
-            <span className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-40">
+            <span className="font-editorial-mono text-xs sm:text-sm tracking-wider uppercase opacity-70 font-medium">
               Open Channel
             </span>
           </div>
@@ -666,76 +784,75 @@ export default function App() {
             {/* Left Contact Information */}
             <div className="md:col-span-5 space-y-6">
               <div>
-                <h2 className="font-editorial-serif text-3xl sm:text-4xl tracking-tight leading-tight">
+                <h2 className="font-editorial-serif text-3xl sm:text-4xl md:text-5xl tracking-tight leading-tight">
                   Initiate conversation.
                 </h2>
-                <p className="mt-2 text-xs sm:text-sm font-editorial-sans opacity-80 leading-relaxed">
+                <p className="mt-2 text-sm sm:text-base font-editorial-sans opacity-90 leading-relaxed">
                   Available for select venture initiatives, advisory inquiries, and strategic collaborations aligned with our principles.
                 </p>
               </div>
 
               {/* Direct Email with copy button */}
               <div
-                className={`p-4 rounded-sm border ${
+                className={`p-5 rounded-sm border ${
                   isNoir
-                    ? 'bg-[#14161F] border-[#222636]'
-                    : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                    ? 'bg-[#14161F] border-[#252A3C]'
+                    : 'bg-[#ECE4D0] border-[#D4CABB]'
                 }`}
               >
-                <span className="block font-editorial-mono text-[9px] uppercase tracking-widest opacity-50 mb-1">
+                <span className="block font-editorial-mono text-xs uppercase tracking-wider font-semibold opacity-65 mb-1.5">
                   Direct Email Channel
                 </span>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-editorial-mono text-xs sm:text-sm font-medium">
-                    arabi.creative@pm.me
+                  <span className="font-editorial-mono text-sm sm:text-base md:text-lg font-bold">
+                    sifat.01938168@gmail.com
                   </span>
                   <button
                     type="button"
                     onClick={handleCopyEmail}
-                    className="p-1.5 rounded-sm hover:opacity-75 transition-opacity"
+                    className="p-2 rounded-sm hover:opacity-75 transition-opacity cursor-pointer"
                     title="Copy email to clipboard"
                     aria-label="Copy email address"
                   >
                     {copiedEmail ? (
                       <Check className={`w-4 h-4 ${blueText}`} />
                     ) : (
-                      <Copy className="w-4 h-4 opacity-60" />
+                      <Copy className="w-4 h-4 opacity-75" />
                     )}
                   </button>
                 </div>
                 {copiedEmail && (
-                  <span className={`mt-1 block text-[10px] font-editorial-mono ${blueText}`}>
+                  <span className={`mt-1.5 block text-xs font-editorial-mono font-medium ${blueText}`}>
                     Copied to clipboard.
                   </span>
                 )}
               </div>
 
               {/* Location details */}
-              <div className="space-y-2 text-xs font-editorial-mono opacity-70">
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-[#E83B2E]" />
+              <div className="space-y-2 text-xs sm:text-sm font-editorial-mono opacity-85 font-medium">
+                <div className="flex items-center gap-2.5">
+                  <MapPin className="w-4 h-4 text-[#E83B2E]" />
                   <span>Chittagong 4000, Bangladesh</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Clock className={`w-3.5 h-3.5 ${blueText}`} />
+                <div className="flex items-center gap-2.5">
+                  <Clock className={`w-4 h-4 ${blueText}`} />
                   <span>Time Zone: GMT+6 (BST)</span>
                 </div>
               </div>
 
               {/* Signature Colophon Mark */}
-              <div className="pt-4 border-t border-current/10">
-                <span className="block font-editorial-mono text-[9px] uppercase tracking-widest opacity-40 mb-2">
+              <div className="pt-4 border-t border-current/15">
+                <span className="block font-editorial-mono text-xs uppercase tracking-wider opacity-60 mb-2 font-medium">
                   Sign-off Colophon
                 </span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <ArabiSignature
-                    className="w-12 h-10 opacity-80"
-                    color="currentColor"
-                    strokeWidth={2.4}
+                    className="w-16 h-12"
+                    theme={theme}
                   />
-                  <div className="font-editorial-mono text-[10px] tracking-wider uppercase opacity-60">
-                    <span>ARABI</span>
-                    <span className="block text-[8px] opacity-75">Chittagong · 2026</span>
+                  <div className="font-editorial-mono text-xs tracking-wider uppercase opacity-80 font-medium">
+                    <span className="font-bold">SIFAT SIDDIQUE (ARABI)</span>
+                    <span className="block text-[10px] opacity-75">Chittagong · 2026</span>
                   </div>
                 </div>
               </div>
@@ -745,17 +862,17 @@ export default function App() {
             <div className="md:col-span-7">
               {formSubmitted ? (
                 <div
-                  className={`p-6 rounded-sm border text-center space-y-3 ${
+                  className={`p-7 rounded-sm border text-center space-y-4 ${
                     isNoir
-                      ? 'bg-[#14161F] border-[#222636]'
-                      : 'bg-[#ECE4D0] border-[#D6CDBC]'
+                      ? 'bg-[#14161F] border-[#252A3C]'
+                      : 'bg-[#ECE4D0] border-[#D4CABB]'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-full ${isNoir ? 'bg-[#3D5CFF]/20 text-[#5577FF]' : 'bg-[#2946D3]/15 text-[#2946D3]'} flex items-center justify-center mx-auto`}>
-                    <Check className="w-4 h-4" />
+                  <div className={`w-10 h-10 rounded-full ${isNoir ? 'bg-[#3D5CFF]/20 text-[#5577FF]' : 'bg-[#2946D3]/15 text-[#2946D3]'} flex items-center justify-center mx-auto`}>
+                    <Check className="w-5 h-5" />
                   </div>
-                  <h3 className="font-editorial-serif text-xl">Dispatch Received</h3>
-                  <p className="font-editorial-sans text-xs opacity-80 max-w-sm mx-auto">
+                  <h3 className="font-editorial-serif text-2xl">Dispatch Received</h3>
+                  <p className="font-editorial-sans text-sm opacity-90 max-w-sm mx-auto leading-relaxed">
                     Thank you, {contactForm.name || 'Visitor'}. Your correspondence has been logged. Responses are typically returned within 48 business hours.
                   </p>
                   <button
@@ -764,7 +881,7 @@ export default function App() {
                       setFormSubmitted(false);
                       setContactForm({ name: '', email: '', subject: '', message: '' });
                     }}
-                    className={`mt-2 text-xs font-editorial-mono uppercase tracking-wider ${blueText} hover:underline`}
+                    className={`mt-2 text-xs sm:text-sm font-editorial-mono uppercase tracking-wider font-bold ${blueText} hover:underline cursor-pointer`}
                   >
                     Send another note
                   </button>
@@ -772,15 +889,15 @@ export default function App() {
               ) : (
                 <form
                   onSubmit={handleContactSubmit}
-                  className={`p-6 rounded-sm border space-y-4 text-xs font-editorial-sans ${
+                  className={`p-6 sm:p-7 rounded-sm border space-y-4.5 text-sm font-editorial-sans ${
                     isNoir
-                      ? 'bg-[#13151D] border-[#222636]'
+                      ? 'bg-[#13151D] border-[#252A3C]'
                       : 'bg-[#EFE7D5] border-[#D6CDBC]'
                   }`}
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+                      <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                         Your Name
                       </label>
                       <input
@@ -791,7 +908,7 @@ export default function App() {
                           setContactForm({ ...contactForm, name: e.target.value })
                         }
                         placeholder="e.g. Tariq Rahman"
-                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
+                        className={`w-full px-3.5 py-2.5 rounded-sm border text-sm sm:text-base focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                           isNoir
                             ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                             : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -799,7 +916,7 @@ export default function App() {
                       />
                     </div>
                     <div>
-                      <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+                      <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                         Return Email
                       </label>
                       <input
@@ -810,7 +927,7 @@ export default function App() {
                           setContactForm({ ...contactForm, email: e.target.value })
                         }
                         placeholder="tariq@organization.org"
-                        className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
+                        className={`w-full px-3.5 py-2.5 rounded-sm border text-sm sm:text-base focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                           isNoir
                             ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                             : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -820,7 +937,7 @@ export default function App() {
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+                    <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                       Subject / Intent
                     </label>
                     <input
@@ -831,7 +948,7 @@ export default function App() {
                         setContactForm({ ...contactForm, subject: e.target.value })
                       }
                       placeholder="e.g. Venture Partnership Inquiry"
-                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
+                      className={`w-full px-3.5 py-2.5 rounded-sm border text-sm sm:text-base focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                         isNoir
                           ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                           : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -840,7 +957,7 @@ export default function App() {
                   </div>
 
                   <div>
-                    <label className="block mb-1 font-editorial-mono text-[10px] tracking-wider uppercase opacity-75">
+                    <label className="block mb-1.5 font-editorial-mono text-xs tracking-wider uppercase font-semibold opacity-85">
                       Message Note
                     </label>
                     <textarea
@@ -851,7 +968,7 @@ export default function App() {
                         setContactForm({ ...contactForm, message: e.target.value })
                       }
                       placeholder="Concise outline of what you'd like to discuss or build together."
-                      className={`w-full px-3 py-2 rounded-sm border focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
+                      className={`w-full px-3.5 py-2.5 rounded-sm border text-sm sm:text-base focus:outline-none ${isNoir ? 'focus:border-[#4D6CFA]' : 'focus:border-[#2946D3]'} ${
                         isNoir
                           ? 'bg-[#181A24] border-[#2E3345] text-[#F1EBDD]'
                           : 'bg-[#FAF6EC] border-[#D1C7B2] text-[#101116]'
@@ -861,9 +978,9 @@ export default function App() {
 
                   <button
                     type="submit"
-                    className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-sm ${blueBg} text-[#F1EBDD] font-medium font-editorial-mono uppercase tracking-wider ${blueHover} transition-colors`}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-sm ${blueBg} text-[#F1EBDD] font-bold font-editorial-mono uppercase tracking-wider text-xs sm:text-sm ${blueHover} transition-colors cursor-pointer shadow-sm`}
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                     <span>Transmit Correspondence</span>
                   </button>
                 </form>
@@ -872,29 +989,36 @@ export default function App() {
           </div>
         </section>
       </main>
+      )}
 
       {/* FOOTER */}
       <footer
-        className={`mt-24 border-t py-10 transition-colors duration-200 ${
-          isNoir
-            ? 'bg-[#0E0F14] border-[#1C1F2B] text-[#F1EBDD]/60'
-            : 'bg-[#E7DFCE] border-[#D4C9B4] text-[#101116]/60'
+        className={`mt-24 border-t py-12 transition-colors duration-200 ${
+          isOtherwiseArmed
+            ? 'bg-[#06070A] border-[#1C1F2B] text-[#F1EBDD]/70'
+            : isNoir
+            ? 'bg-[#0E0F14] border-[#1C1F2B] text-[#F1EBDD]/70'
+            : 'bg-[#E7DFCE] border-[#D4C9B4] text-[#101116]/70'
         }`}
       >
-        <div className="max-w-4xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-editorial-mono">
+        <div className="max-w-4xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-xs sm:text-sm font-editorial-mono font-medium">
           <div className="flex items-center gap-3">
-            <span className="font-semibold text-current opacity-90">ARABI</span>
+            <ArabiSignature
+              className="w-11 h-9 opacity-85"
+              theme={theme}
+            />
+            <span className="font-bold text-current opacity-95">SIFAT SIDDIQUE (ARABI)</span>
             <span>·</span>
             <span>Chittagong, Bangladesh</span>
             <span>·</span>
             <span>2026</span>
           </div>
 
-          <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider">
-            <span>Layer 01: Editorial Monograph</span>
+          <div className="flex items-center gap-4 text-xs uppercase tracking-wider font-semibold">
+            <span>{isOtherwiseArmed ? 'Layer 02: Digital Exhibition' : 'Layer 01: Editorial Monograph'}</span>
             <span>·</span>
-            <span className={isOtherwiseArmed ? `${blueText} font-semibold` : 'opacity-50'}>
-              {isOtherwiseArmed ? 'Otherwise: Armed' : 'Otherwise: Standby'}
+            <span className={isOtherwiseArmed ? `${blueText} font-bold` : 'opacity-60'}>
+              {isOtherwiseArmed ? 'Section W: Artistic' : 'Section L: Unimaginative'}
             </span>
           </div>
         </div>
